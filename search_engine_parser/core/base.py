@@ -47,7 +47,7 @@ class SearchItem(dict):
         return super().__getitem__(value)
 
 
-class SearchResult():
+class SearchResult:
     """
     The SearchResults after the searching
 
@@ -124,8 +124,7 @@ class BaseSearch:
         Every div/span containing a result is passed here to retrieve
         `title`, `link` and `descr`
         """
-        raise NotImplementedError(
-            "subclasses must define method <parse_results>")
+        raise NotImplementedError("subclasses must define method <parse_results>")
 
     def get_cache_handler(self):
         """ Return Cache Handler to use"""
@@ -155,13 +154,13 @@ class BaseSearch:
 
     def get_params(self, query=None, page=None, offset=None, **kwargs):
         """ This  function should be overwritten to return a dictionary of query params"""
-        return {'q': query, 'page': page}
+        return {"q": query, "page": page}
 
     def headers(self):
         headers = {
-            "Cache-Control": 'no-cache',
+            "Cache-Control": "no-cache",
             "Connection": "keep-alive",
-            "User-Agent": utils.get_rand_user_agent()
+            "User-Agent": utils.get_rand_user_agent(),
         }
         return headers
 
@@ -175,42 +174,32 @@ class BaseSearch:
             return self.cache_handler.clear()
         return self.cache_handler.clear(self.name)
 
-    async def get_source(self, url, cache=True, proxy=None, proxy_auth=None):
+    async def get_source(self, url, cache=True):
         """
         Returns the source code of a webpage.
         Also sets the _cache_hit if cache was used
 
         :rtype: string
         :param url: URL to pull it's source code
-        :param proxy: proxy address to make use off
-        :type proxy: str
-        :param proxy_auth: (user, password) tuple to authenticate proxy
-        :type proxy_auth: (str, str)
         :return: html source code of a given URL.
         """
         try:
-            html, cache_hit = await self.cache_handler.get_source(self.name, url, self.headers(), cache, proxy, proxy_auth)
+            html, cache_hit = await self.cache_handler.get_source(
+                self.name, url, self.headers(), cache
+            )
         except Exception as exc:
-            raise Exception('ERROR: {}\n'.format(exc))
+            raise Exception("ERROR: {}\n".format(exc))
         self._cache_hit = cache_hit
         return html
 
-    async def get_soup(self, url, cache, proxy, proxy_auth):
+    async def get_soup(self, url, cache):
         """
         Get the html soup of a query
-        :param url: url to obrain soup from
-        :type url: str
-        :param cache: cache request or not
-        :type cache: bool
-        :param proxy: proxy address to make use off
-        :type proxy: str
-        :param proxy_auth: (user, password) tuple to authenticate proxy
-        :type proxy_auth: (str, str)
 
         :rtype: `bs4.element.ResultSet`
         """
-        html = await self.get_source(url, cache, proxy, proxy_auth)
-        return BeautifulSoup(html, 'lxml')
+        html = await self.get_source(url, cache)
+        return BeautifulSoup(html, "lxml")
 
     def get_search_url(self, query=None, page=None, **kwargs):
         """
@@ -218,8 +207,7 @@ class BaseSearch:
         """
         # Some URLs use offsets
         offset = (page * 10) - 9
-        params = self.get_params(
-            query=query, page=page, offset=offset, **kwargs)
+        params = self.get_params(query=query, page=page, offset=offset, **kwargs)
         url = urlparse(self.search_url)
         # For localization purposes, custom urls can be parsed for the same engine
         # such as google.de and google.com
@@ -246,7 +234,8 @@ class BaseSearch:
             print("ENGINE FAILURE: {}\n".format(self.name))
             raise NoResultsOrTrafficError(
                 "The result parsing was unsuccessful. It is either your query could not be found"
-                " or it was flagged as unusual traffic")
+                " or it was flagged as unusual traffic"
+            )
 
         try:
             search_results = self.parse_result(results, **kwargs)
@@ -256,11 +245,11 @@ class BaseSearch:
                 "The returned results could not be parsed. This might be due to site updates or "
                 "server errors. Drop an issue at https://github.com/bisoncorps/search-engine-parser"
                 " if this persists"
-                )
+            )
 
         return search_results
 
-    def search(self, query=None, page=1, cache=True, proxy=None, proxy_auth=None, **kwargs):
+    def search(self, query=None, page=1, cache=True, **kwargs):
         """
         Query the search engine
 
@@ -268,10 +257,6 @@ class BaseSearch:
         :type query: str
         :param page: Page to be displayed, defaults to 1
         :type page: int
-        :param proxy: proxy address to make use off
-        :type proxy: str
-        :param proxy_auth: (user, password) tuple to authenticate proxy
-        :type proxy_auth: (str, str)
         :return: dictionary. Containing titles, links, netlocs and descriptions.
         """
         # Pages can only be from 1-N
@@ -279,15 +264,11 @@ class BaseSearch:
             page = 1
         # Get search Page Results
         loop = asyncio.get_event_loop()
-        url = self.get_search_url(
-                    query, page, **kwargs)
-        soup = loop.run_until_complete(
-            self.get_soup(url, cache=cache,
-                         proxy=proxy,
-                         proxy_auth=proxy_auth))
+        url = self.get_search_url(query, page, **kwargs)
+        soup = loop.run_until_complete(self.get_soup(url, cache=cache))
         return self.get_results(soup, **kwargs)
 
-    async def async_search(self, query=None, page=1, cache=True, proxy=None, proxy_auth=None, **kwargs):
+    async def async_search(self, query=None, page=1, cache=True, **kwargs):
         """
         Query the search engine but in async mode
 
@@ -295,14 +276,12 @@ class BaseSearch:
         :type query: str
         :param page: Page to be displayed, defaults to 1
         :type page: int
-        :param proxy: proxy address to make use off
-        :type proxy: str
-        :param proxy_auth: (user, password) tuple to authenticate proxy
-        :type proxy_auth: (str, str)
         :return: dictionary. Containing titles, links, netlocs and descriptions.
         """
         # Pages can only be from 1-N
         if page == 0:
             page = 1
-        soup = await self.get_soup(self.get_search_url(query, page, **kwargs), cache=cache, proxy=proxy, proxy_auth=(proxy_user, proxy_password))
+        soup = await self.get_soup(
+            self.get_search_url(query, page, **kwargs), cache=cache
+        )
         return self.get_results(soup, **kwargs)

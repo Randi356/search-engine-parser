@@ -74,7 +74,7 @@ class Search(BaseSearch):
         if return_type in (ReturnType.FULL, ReturnType.TITLE):
             link_tag = r_elem.find('a')
             if link_tag:
-                title = link_tag.find('h3').text
+                title = getattr(link_tag.find('h3'), 'text', '')
             else:
                 r_elem = els[1]
                 title = r_elem.find('div', class_='BNeawe').text

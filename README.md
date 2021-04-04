@@ -148,17 +148,6 @@ The results are automatically cached for engine searches. You can either bypass 
     github.search("search-engine-parser")
 ```
 
-#### Proxy
-Adding a proxy entails sending details to the search function
-```python
-    from search_engine_parser.core.engines.github import Search as GitHub
-    github = GitHub()
-    github.search("search-engine-parser", 
-        # http proxies supported only
-        proxy='http://123.12.1.0',
-        proxy_auth=('username', 'password'))
-```
-
 
 #### Async
 search-engine-parser supports `async`:
