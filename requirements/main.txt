@@ -1,4 +1,4 @@
 lxml>=4.6.3
-aiohttp>=3.7.4.post0
+aiohttp>=4.0.0a1
 beautifulsoup4>=4.9.3
 fake-useragent>=0.1.11
