@@ -9,6 +9,12 @@ FILEPATH = os.path.dirname(os.path.abspath(__file__))
 
 # prevent caching
 USER_AGENT_LIST = [
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 11.0) AppleWebKit/602.1.50 (KHTML, like Gecko) "
+    "Version/11.0 Safari/602.1.50",
+    "Mozilla/5.0 (Linux; Android 9; SAMSUNG SM-G965U) AppleWebKit/537.36 (KHTML, like Gecko) "
+    "SamsungBrowser/10.1 Chrome/71.0.3578.99 Mobile Safari/537.36",
+    "Mozilla/5.0 (Linux; Android 9; SAMSUNG SM-G950U) AppleWebKit/537.36 (KHTML, like Gecko) "
+    "SamsungBrowser/10.2 Chrome/71.0.3578.99 Mobile Safari/537.36",
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:11.0) Gecko/20100101 Firefox/11.0",
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
     "Chrome/72.0.3626.121 Safari/537.36",
