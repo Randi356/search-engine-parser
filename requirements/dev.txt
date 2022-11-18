@@ -1,6 +1,6 @@
 -r main.txt
 blessed==1.19.0
-m2r==0.2.1
+m2r==0.3.1
 parameterized==0.8.1
 pylint==2.11.1
 pytest==6.2.5
